@@ -28,7 +28,7 @@ app.get("/loginmidpoint/:email/:password", (req, res)=>{
 	let password = decodeURIComponent(req.params.password)
 	res.send(JSON.stringify(userbase))
 	if (userbase.data[email]["pass"] !== password) {
-		res.send("<script>alert('Incorrect creditentials'); setTimeout(()=>{window.location='sessions.eitanim.repl.co/login.html'},2000)</script>")
+		res.send("<script>alert('Incorrect creditentials'); setTimeout(()=>{window.location='https://sessions.eitanim.repl.co/login.html'},2000)</script>")
 	} else {
 		userbase.data[email].logins += 1
 		res.redirect("/app")
