@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Signup | account-system</title>
+</head>
+<body>
+	<h1>account-system</h1>
+	<h2>Sign Up</h2>
+	<b style="color:red;">IMPORTANT!!! We do not support password encryption at this time, meaning that anybody can view your password! Do not use a password that you commonly use.</b>
+	<input id="email" type="email" placeholder="Username">
+	</p>(Your Username will only be visible to you.)</p>
+	<input id="password" type="password" placeholder="Password">
+	<button id="submit">Submit</button>
+	<script>
+		document.getElementById("submit").addEventListener("click", (e)=>{
+			var email = document.getElementById("email") !== "" ? document.getElementById("email").value : null;
+			var password = document.getElementById("password").value !== "" ? document.getElementById("password").value : null;
+
+			if (email == null || password == null) {
+				alert("Invalid credentials")
+			} else {
+				if (password.length < 8 || password.length > 20) {
+					alert("Password is too long or too short.")
+				} else {
+					window.location = "https://account-system.anthonymouse.repl.co/signupmidpoint/" + encodeURIComponent(email) + "/" + encodeURIComponent(password)
+				}
+			}
+		})
+	</script>
+</body>
+</html>

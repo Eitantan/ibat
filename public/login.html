@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Log In | account-system</title>
+</head>
+<body>
+	<h1>account-system</h1>
+	<h2>Login</h2>
+	<input id="email" type="email" placeholder="Username">
+	<input id="password" type="password" placeholder="Password">
+	<button id="submit">Submit</button>
+	<script>
+		document.getElementById("submit").addEventListener("click", (e)=>{
+			var email = document.getElementById("email") !== "" ? document.getElementById("email").value : null;
+			var password = document.getElementById("password").value !== "" ? document.getElementById("password").value : null;
+
+			if (email == null || password == null) {
+				alert("Invalid credentials")
+			} else {
+				window.location = "https://account-system.anthonymouse.repl.co/loginmidpoint/" + encodeURIComponent(email) + "/" + encodeURIComponent(password)
+			}
+		})
+	</script>
+</body>
+</html>
