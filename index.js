@@ -7,27 +7,12 @@ let userbase = new Database("users")
 const app = express();
 app.use(express.static("public"))
 
-// function resetSessions() {
-//   for (let a in userbase.data) {
-//     userbase.data[a].currentSessionID = "invalid";
-//   }
-// }
-
-// function zed() {
-//   let dat = new Date();
-//   let time = dat.getHours();
-//   if (time == Math.round(Math.random()*24)) {
-//     resetSessions()
-//   }
-// }
-
-// setInterval(zed, 300000)
-
 app.get("/signupmidpoint/:email/:password", (req, res)=>{
   let email = decodeURIComponent(req.params.email)
 	let password = decodeURIComponent(req.params.password)
+	console.log(userbase.data[email])
 	if (userbase.data[email] !== undefined) {
-		res.send("<script>alert('Username taken'); setTimeout(()=>{window.location='https://sessions.eitanim.repl.co/signup.html'},2000)</script>")
+		res.send("<script>alert('Username taken'); setTimeout(()=>{window.location='https://ibuiltathing.anthonymouse.repl.co/signup.html'},2000)</script>")
 	} else {
     var randsessid = rand()
 		userbase.data[email] = {"pass": password}
@@ -42,9 +27,8 @@ app.get("/loginmidpoint/:email/:password", (req, res)=>{
 	console.log(decodeURIComponent(req.params.password))
 	let email = decodeURIComponent(req.params.email)
 	let password = decodeURIComponent(req.params.password)
-	res.send(JSON.stringify(userbase))
 	if (userbase.data[email]["pass"] !== password) {
-		res.send("<script>alert('Incorrect creditentials'); setTimeout(()=>{window.location='https://sessions.eitanim.repl.co/login.html'},2000)</script>")
+		res.send("<script>alert('Incorrect creditentials'); setTimeout(()=>{window.location='https://ibuiltathing.anthonymouse.repl.co/login.html'},2000)</script>")
 	} else {
 		userbase.data[email].logins += 1
     userbase.data[email].currentSessionID = rand()
@@ -64,7 +48,7 @@ app.get("/error/:errorcode/:errorreason", (req, res)=>{
 <body>
   <h1>Error ${req.params.errorcode}</h1>
   <b>We could not find the webpage you were looking for, because <span style="color:red;background-color:black">${decodeURIComponent(req.params.errorreason)}</span></b>
-  <a href="https://sessions.eitanim.repl.co">ET Go Home</a>
+  <a href="https://ibuiltathing.anthonymouse.repl.co">ET Go Home</a>
 </body>
 </html>`)
 })
@@ -73,6 +57,7 @@ app.get("/app/:sessionid", (req, res)=>{
   let currUser = ""
   let sessFound = false;
   for (let user in userbase.data) {
+		console.log(userbase.data[user])
     if (userbase.data[user].currentSessionID == req.params.sessionid) {
       currUser = user;
       sessFound = true;
@@ -90,11 +75,28 @@ app.get("/app/:sessionid", (req, res)=>{
 			<title>account-system | Home</title>
 		</head>
 		<body>
-			<h1>sessions</h1>
-	 	<p>hallo ${currUser}</p>
+			<h1>ibuiltathing</h1>
+	 		<p>hello ${currUser}</p>
+			<a href="/logout/${req.params.sessionid}">Logout</a>
 		</body>
 		</html>
  `)
+})
+
+app.get("/logout/:sessionid", (req, res)=>{
+  let currUser = ""
+  let sessFound = false;
+  for (let user in userbase.data) {
+		console.log(userbase.data[user])
+    if (userbase.data[user].currentSessionID == req.params.sessionid) {
+      currUser = user;
+      sessFound = true;
+			userbase.data[user].currentSessionID == null;
+			res.redirect("https://ibuiltathing.anthonymouse.repl.co")
+    } else {
+     if (sessFound == false) res.redirect("/error/487/your%20session%20id%20was%20invalid.")
+    }
+  }
 })
 
 app.listen(3000, () => {
