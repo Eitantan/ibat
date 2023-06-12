@@ -3,6 +3,9 @@ const Database = require("replpersist")
 const { generate } = require("randomstring")
 const rand = generate
 let userbase = new Database("users")
+let projects = new Database("projects")
+projects.data.dir = []
+projects.data.projCount = -1;
 
 const app = express();
 app.use(express.static("public"))
@@ -14,15 +17,20 @@ app.get("/signupmidpoint/:email/:password", (req, res)=>{
   let email = decodeURIComponent(req.params.email)
 	let password = decodeURIComponent(req.params.password)
 	console.log(userbase.data[email])
-	if (userbase.data[email] !== undefined) {
-		res.send("<script>alert('Username taken'); setTimeout(()=>{window.location='https://ibuiltathing.anthonymouse.repl.co/signup.html'},2000)</script>")
-	} else {
-    var randsessid = rand()
+	if (userbase.data[email] == undefined) {
+
+		var randsessid = rand()
+		
 		userbase.data[email] = {"pass": password}
 		userbase.data[email].logins = 1
     userbase.data[email].currentSessionID = randsessid
+		
+		res.redirect("/app/" + randsessid)
+
+		return;
+	} else {
+		res.send("<script>alert('Username taken'); setTimeout(()=>{window.location='https://ibuiltathing.anthonymouse.repl.co/signup.html'},500)</script>")
 	}
-	res.redirect("/app/" + randsessid)
 })
 
 app.get("/loginmidpoint/:email/:password", (req, res)=>{
@@ -64,10 +72,9 @@ app.get("/app/:sessionid", (req, res)=>{
     if (userbase.data[user].currentSessionID == req.params.sessionid) {
       currUser = user;
       sessFound = true;
-    } else {
-     if (sessFound == false) res.redirect("/error/487/your%20session%20id%20was%20invalid.")
     }
   }
+	if (sessFound == false) res.redirect("/error/487/your%20session%20id%20was%20invalid.")
 	res.send(`
  		<!DOCTYPE html>
 		<html lang="en">
@@ -97,10 +104,9 @@ app.get("/logout/:sessionid", (req, res)=>{
       sessFound = true;
 			userbase.data[user].currentSessionID == null;
 			res.redirect("https://ibuiltathing.anthonymouse.repl.co")
-    } else {
-     if (sessFound == false) res.redirect("/error/487/your%20session%20id%20was%20invalid.")
     }
   }
+ if (sessFound == false) res.redirect("/error/487/your%20session%20id%20was%20invalid.")
 })
 
 app.get("/upload/:sessionid", (req, res)=>{
@@ -111,10 +117,9 @@ app.get("/upload/:sessionid", (req, res)=>{
     if (userbase.data[user].currentSessionID == req.params.sessionid) {
       currUser = user;
       sessFound = true;
-    } else {
-     if (sessFound == false) res.redirect("/error/487/your%20session%20id%20was%20invalid.")
     }
   }
+	     if (sessFound == false) res.redirect("/error/487/your%20session%20id%20was%20invalid.")
 	res.send(`
  		<!DOCTYPE html>
 		<html lang="en">
@@ -143,6 +148,7 @@ app.get("/upload/:sessionid", (req, res)=>{
 				<p>Upload Images</p>
 				<input type="file" id="image_input" accept="image/jpeg, image/png, image/jpg" multiple=true>
 		  	<div id="display_image"></div>
+		 		<input name=tag type=text id=tag>
 				<input id="submit" type="submit">
 			</form>
 	 <script>
@@ -165,11 +171,15 @@ app.post("/upload/:sessionid", (req, res)=>{
     if (userbase.data[user].currentSessionID == req.params.sessionid) {
       currUser = user;
       sessFound = true;
-    } else {
-     if (sessFound == false) res.redirect("/error/487/your%20session%20id%20was%20invalid.")
     }
   }
-	res.send(req.body)
+	     if (sessFound == false) res.redirect("/error/487/your%20session%20id%20was%20invalid.")
+	var date = new Date()
+	if (userbase.data[currUser].projects == undefined) userbase.data[currUser].projects = []
+	userbase.data[currUser].projects.push(projects.data.projCount+1)
+	projects.data.projCount++;
+	projects.data.dir.push({user: currUser, title: req.body.title, desc: req.body.desc, tag: req.body.tag, date: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`})
+	res.redirect("/app/" + req.params.sessionid)
 })
 
 /* <!--	 
